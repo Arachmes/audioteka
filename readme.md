@@ -1,5 +1,16 @@
 # Audioteka: zadanie rekrutacyjne
 
+## Rozwiązanie
+**1. Chcemy móc dodawać do koszyka ten sam produkt kilka razy, o ile nie zostanie przekroczony sumaryczny limit sztuk produktów. Teraz to nie działa.**
+
+Należało z relacji ManyToMany, utworzyć entity CartProduct z dwiema relacjami ManyToOne i dodatkowym polem. Można byłoby dodać pole "quantity", które podliczałoby duplikaty. Zdecydowałem się jednak na dodanie identyfikatora aby zachować strukturę odpowiedzi z endpointa. Jeżeli wymagania dotyczące endpointa API miałby zostać zmienione, można wtedy dodać pole quantity.
+
+Postanowiłem zrefaktoryzować interface App\Service\Cart\Cart, ponieważ uznałem, że w momencie, gdy do produktu w koszyku, miałyby zostać dodane dodatkowe parametry, będzie to wygodniejsze do obsługi. Wymagało to też zmiany w testach.
+
+Ponieważ zdecydowałem się dodać generowany identyfikator Id do CartProduct, koszyk zwraca produkty w kolejności według tego identyfikatora (wedlug kolejności dodania), więc należało poprawić test test_shows_cart.
+
+****
+
 ## Instalacja
 
 Do uruchomienia wymagany jest `docker` i `docker-compose`

@@ -51,4 +51,34 @@ class AddProductControllerTest extends WebTestCase
         $this->client->request('PUT', '/cart/5bd88887-7017-4c08-83de-8b5d9abde58c/b832e983-6159-47db-a98f-575a46d9544c');
         self::assertResponseStatusCodeSame(404);
     }
+
+
+    public function test_add_same_product_twice(): void
+    {
+        $this->client->request('PUT', '/cart/354b2a95-a5a5-4cc6-8057-4619ddc8df41/fbcb8c51-5dcc-4fd4-a4cd-ceb9b400bff7');
+        self::assertResponseStatusCodeSame(202);
+
+        $this->client->request('GET', '/cart/354b2a95-a5a5-4cc6-8057-4619ddc8df41');
+        self::assertResponseStatusCodeSame(200);
+
+        $response = $this->getJsonResponse();
+        self::assertCount(2, $response['products']);
+    }
+
+
+    public function test_refuse_to_add_fourth_duplicate_product_to_cart(): void
+    {
+        $this->client->request('PUT', '/cart/acf0a7ea-4c00-450e-bf89-f760ec566bac/fbcb8c51-5dcc-4fd4-a4cd-ceb9b400bff7');
+        self::assertResponseStatusCodeSame(422);
+
+        $response = $this->getJsonResponse();
+        self::assertEquals(['error_message' => 'Cart is full.'], $response);
+
+        $this->client->request('GET', '/cart/acf0a7ea-4c00-450e-bf89-f760ec566bac');
+        self::assertResponseStatusCodeSame(200);
+
+        $response = $this->getJsonResponse();
+        self::assertCount(3, $response['products']);
+    }
+
 }
