@@ -8,9 +8,11 @@ use App\Messenger\AddProductToCart;
 use App\Messenger\MessageBusAwareInterface;
 use App\Messenger\MessageBusTrait;
 use App\ResponseBuilder\ErrorBuilder;
+use App\Service\Cart\CartService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -20,10 +22,20 @@ class AddProductController extends AbstractController implements MessageBusAware
 {
     use MessageBusTrait;
 
-    public function __construct(private ErrorBuilder $errorBuilder) { }
+    public function __construct(
+        private ErrorBuilder $errorBuilder,
+        private CartService $service,
+        private LockFactory $lockFactory
+    )
+    {
+    }
 
     public function __invoke(Cart $cart, Product $product): Response
     {
+
+        $lock = $this->lockFactory->createLock(Cart::UPDATE_RESOURCE. $cart->getId());
+        $lock->acquire(true);
+
         if ($cart->isFull()) {
             return new JsonResponse(
                 $this->errorBuilder->__invoke('Cart is full.'),

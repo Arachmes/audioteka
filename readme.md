@@ -11,6 +11,14 @@ Ponieważ zdecydowałem się dodać generowany identyfikator Id do CartProduct, 
 
 ****
 
+**2. Limit koszyka nie zawsze działa. Wprawdzie, gdy podczas naszych testów dodajemy czwarty produkt do koszyka to dostajemy komunikat `Cart is full.`, ale pomimo tego i tak niektóre koszyki w bazie danych mają po cztery produkty.**
+
+Ze względu na to, że zadanie dodania produktu do koszyka jest obsługiwane przez kolejkę asynchroniczną, może dojść do przypadku, w którym zadanie nie zostanie jeszcze obsłużone, a kolejny request będzie odpytywał nieaktualny stan koszyka. Aby temu zapobiec, zamieniłem kolejkę na synchroniczną oraz utworzyłem locka, który będzie czekał, aż poprzednie zadanie zostanie wykonane.
+
+Dodatkowym zabezpieczeniem będzie, dodanie w CartRepository,  sprawdzenia czy koszyk jest pełen. Użycie tylko tego drugiego rozwiązania byłoby niewystarczające, ponieważ mimo, że zablokowalibyśmy możliwość dodania produktów ponad limit, to użytkownik wciąż mógłby otrzymywać błędną odpowiedź.
+
+****
+
 ## Instalacja
 
 Do uruchomienia wymagany jest `docker` i `docker-compose`

@@ -13,6 +13,7 @@ use Ramsey\Uuid\UuidInterface;
 class Cart implements \App\Service\Cart\Cart
 {
     public const CAPACITY = 3;
+    public const UPDATE_RESOURCE = 'cart-update-';
 
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', nullable: false)]
