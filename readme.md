@@ -27,6 +27,14 @@ Na ten moment wybór sortowania znajduje się w controllerze, tworząc obiekt Or
 
 ****
 
+**4. Musimy mieć możliwość edycji produktów. Czasami w nazwach są literówki, innym razem cena jest nieaktualna.**
+
+Utworzono testy, request oraz funkcję w repository i interfejsie umożliwiające edycję produktu. 
+
+Można byłoby jeszcze dodać moduł symfony/validator i na bazie Constraints'ów i atrybutów zrobić walidację entity Product aby te same warunki wykorzystywać przy dodawaniu i edycji.
+
+****
+
 ## Instalacja
 
 Do uruchomienia wymagany jest `docker` i `docker-compose`

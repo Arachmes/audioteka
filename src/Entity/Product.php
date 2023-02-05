@@ -59,4 +59,17 @@ class Product implements \App\Service\Catalog\Product
     }
 
 
+    public function setName(string $name): \App\Service\Catalog\Product
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function setPrice(int $price): \App\Service\Catalog\Product
+    {
+        $this->priceAmount = $price;
+
+        return $this;
+    }
 }
