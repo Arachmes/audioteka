@@ -7,10 +7,12 @@ use App\Service\Catalog\ProductProvider;
 use App\Service\Catalog\ProductService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\OrderBy;
 use Ramsey\Uuid\Uuid;
 
 class ProductRepository implements ProductProvider, ProductService
 {
+    public const PREFIX = 'p';
     private EntityRepository $repository;
 
     public function __construct(private EntityManagerInterface $entityManager)
@@ -18,14 +20,18 @@ class ProductRepository implements ProductProvider, ProductService
         $this->repository = $this->entityManager->getRepository(\App\Entity\Product::class);
     }
 
-    public function getProducts(int $page = 0, int $count = 3): iterable
+    public function getProducts(int $page = 0, int $count = 3, OrderBy $orderBy = null): iterable
     {
-        return $this->repository->createQueryBuilder('p')
+        $queryBuilder = $this->repository->createQueryBuilder(self::PREFIX)
             ->setMaxResults($count)
-            ->setFirstResult($page * $count)
-            ->getQuery()
-            ->getResult()
-        ;
+            ->setFirstResult($page * $count);
+
+        if ($orderBy && $orderBy->count()) {
+            $queryBuilder->orderBy($orderBy);
+        }
+
+
+        return $queryBuilder->getQuery()->getResult();
     }
 
     public function getTotalCount(): int
@@ -56,4 +62,17 @@ class ProductRepository implements ProductProvider, ProductService
             $this->entityManager->flush();
         }
     }
+
+    public function getOrderColumn(string $columnName): ?string
+    {
+
+        $meta = $this->entityManager->getClassMetadata(\App\Entity\Product::class);
+
+        if ($meta->hasField($columnName)) {
+            return self::PREFIX . '.' . $columnName;
+        }
+
+        return null;
+    }
+
 }

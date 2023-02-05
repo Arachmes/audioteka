@@ -19,6 +19,14 @@ Dodatkowym zabezpieczeniem będzie, dodanie w CartRepository,  sprawdzenia czy k
 
 ****
 
+**3. Najnowsze (ostatnio dodane) produkty powinny być dostępne na początkowych stronach listy produktów.**
+
+Dodano kolumnę created z datą utworzenia oraz umożliwiona sortowanie w klasie ProductRepository. Uwzględniono możliwość sortownia w przyszłości po innych parametrach, wraz z sprawdzeniem czy parametr istnieje w entity.  
+
+Na ten moment wybór sortowania znajduje się w controllerze, tworząc obiekt OrderBy. W przyszłości można byłoby utworzyć traita, który tworzył by ten obiekt na podstawie parametrów sortowania z query, tak by można było zaimplementować to również w innych kontrolerach.
+
+****
+
 ## Instalacja
 
 Do uruchomienia wymagany jest `docker` i `docker-compose`

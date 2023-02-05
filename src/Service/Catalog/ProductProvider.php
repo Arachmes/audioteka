@@ -12,4 +12,6 @@ interface ProductProvider
     public function exists(string $productId): bool;
 
     public function getTotalCount(): int;
+
+    public function getOrderColumn(string $columnName): ?string;
 }

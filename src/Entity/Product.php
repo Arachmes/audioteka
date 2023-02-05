@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -19,11 +20,15 @@ class Product implements \App\Service\Catalog\Product
     #[ORM\Column(type: 'integer', nullable: false)]
     private string $priceAmount;
 
-    public function __construct(string $id, string $name, int $price)
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: false, columnDefinition: "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP")]
+    private ?\DateTimeInterface $created = null;
+
+    public function __construct(string $id, string $name, int $price, ?\DateTimeInterface $created = new \DateTime())
     {
         $this->id = Uuid::fromString($id);
         $this->name = $name;
         $this->priceAmount = $price;
+        $this->created = $created;
     }
 
     public function getId(): string
@@ -40,4 +45,18 @@ class Product implements \App\Service\Catalog\Product
     {
         return $this->priceAmount;
     }
+
+    public function getCreated(): ?\DateTimeInterface
+    {
+        return $this->created;
+    }
+
+    public function setCreated(\DateTimeInterface $created): self
+    {
+        $this->created = $created;
+
+        return $this;
+    }
+
+
 }

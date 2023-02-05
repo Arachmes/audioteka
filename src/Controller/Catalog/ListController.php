@@ -4,6 +4,8 @@ namespace App\Controller\Catalog;
 
 use App\ResponseBuilder\ProductListBuilder;
 use App\Service\Catalog\ProductProvider;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\Query\Expr\OrderBy;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,8 +24,9 @@ class ListController extends AbstractController
     public function __invoke(Request $request): Response
     {
         $page = max(0, (int)$request->get('page', 0));
+        $orderBy = new OrderBy($this->productProvider->getOrderColumn('created'), Criteria::DESC);
 
-        $products = $this->productProvider->getProducts($page, self::MAX_PER_PAGE);
+        $products = $this->productProvider->getProducts($page, self::MAX_PER_PAGE, $orderBy);
         $totalCount = $this->productProvider->getTotalCount();
 
         return new JsonResponse(
